@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 
-import Layout from '../js/components/Layout';
+import Layout from '../../js/components/Layout';
 
 describe('component Layout', () => {
   it ('should have a className called layout', () => {

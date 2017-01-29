@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 
-import Navigation from '../js/components/Layout/Navigation';
+import Navigation from '../../../js/components/Layout/Navigation';
 
 describe('component Navigation', () => {
   it ('should have a className called navigation', () => {
