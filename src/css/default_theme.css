@@ -1,3 +1,51 @@
 @import url('https://fonts.googleapis.com/css?family=Exo+2');
 
-body { font-family: 'Exo 2', sans-serif; }
+/* core styles */
+body { font-family: 'Exo 2', sans-serif; background-color: #262626; color: #eeeeee; }
+a { text-decoration: none; }
+a:hover { text-decoration: none; }
+a:visited { text-decoration: none; }
+
+/* Layout */
+
+/* timeline Navigation */
+
+/* timeline Content */
+.column { background-color: #444; }
+.card { }
+.card-header { } /* used for notes only */
+.user-icon { }
+.card-content { }
+.card-msg-header { }
+.display-name { }
+.user-name { }
+.timestamp { }
+.card-msg { }
+.card-actions { }
+
+/* settings Navigation */
+
+/* settings Content */
+
+/* flavour color overrides */
+.light { }
+
+.mono-red { color: #FFE6E6; }
+.mono-red > .column { background-color: #402b2b; }
+.mono-red > a { }
+.mono-red > a:hover { }
+.mono-red > a:visited { }
+
+.mono-orange { }
+
+.mono-yellow { }
+
+.mono-green { }
+
+.mono-blue { }
+
+.mono-purple { }
+
+.mono-pink { color: #feedee; }
+
+.mono-gray { }
