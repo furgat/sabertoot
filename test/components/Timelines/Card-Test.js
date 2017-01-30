@@ -7,7 +7,17 @@ import Card from '../../../js/components/Timelines/Card';
 describe('component Card', () => {
   it ('should render as .card', () => {
     const wrapper = shallow(<Card />);
-    expect(wrapper.is('.card')).to.equal(true);
+    expect(wrapper.hasClass('card')).to.equal(true);
+  })
+
+  it ('should render as .card-toot if cardType is toot', () => {
+    const wrapper = shallow(<Card cardType='toot'/>);
+    expect(wrapper.hasClass('card-toot')).to.equal(true);
+  })
+
+  it ('should render as .card-note if cardType is note', () => {
+    const wrapper = shallow(<Card cardType='note'/>);
+    expect(wrapper.hasClass('card-note')).to.equal(true);
   })
 
   describe('div .card', () => {

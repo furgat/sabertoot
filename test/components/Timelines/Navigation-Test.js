@@ -7,7 +7,7 @@ import Navigation from '../../../js/components/Timelines/Navigation';
 describe('component Navigation', () => {
   it ('should render as .navigation', () => {
     const wrapper = shallow(<Navigation />);
-    expect(wrapper.is('.navigation')).to.equal(true);
+    expect(wrapper.hasClass('navigation')).to.equal(true);
   })
 
   describe('div .navigation', () => {

@@ -8,7 +8,7 @@ import Timelines from '../../js/components/Pages/Timelines';
 describe('component Layout', () => {
   it ('should render as .layout', () => {
     const wrapper = shallow(<Layout />);
-    expect(wrapper.is('.layout')).to.equal(true);
+    expect(wrapper.hasClass('layout')).to.equal(true);
   })
 
   it ('should render children when passed', () => {
