@@ -1,7 +1,7 @@
 import React from 'react';
 import {EventEmitter} from 'events';
 
-import dispatcher from '../dispatchers/MastoDispatch';
+import MastoDispatch from '../dispatchers/MastoDispatch';
 
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
@@ -9,54 +9,8 @@ import Column from '../components/Timelines/Column';
 class MastoStore extends EventEmitter {
   constructor() {
     super();
-    this.columns = {
-      home: {
-        columnHeader: 'Home',
-        listCards: [
-          <Card
-            key='uniquekey'
-            userIcon='http://www.conservationdecoys.com/images/deer-decoy1.jpg'
-            userUrl=''
-            userName='@username'
-            displayName='Display Name'
-            timeStamp='11/44/23'
-            cardMsg='this is a test home toot card'
-            cardType='toot'
-          />
-        ]
-      },
-      notes: {
-        columnHeader: 'Notes',
-        listCards: [
-          <Card
-            key='uniqueley'
-            userIcon='http://www.conservationdecoys.com/images/deer-decoy1.jpg'
-            userUrl=''
-            userName='@username'
-            displayName='Display Name'
-            timeStamp='75/34/55'
-            cardMsg='this is a test note card'
-            cardType='note'
-            cardHeader='Display Name favorited your Toot!'
-          />
-        ]
-      },
-      fediverse: {
-        columnHeader: 'Fediverse',
-        listCards: [
-          <Card
-            key='uniquebey'
-            userIcon='http://www.conservationdecoys.com/images/deer-decoy1.jpg'
-            userUrl=''
-            userName='@username'
-            displayName='Display Name'
-            timeStamp='55/15/85'
-            cardMsg='this is a test fediverse toot card'
-            cardType='toot'
-          />
-        ]
-      }
-    }
+    this.domains = [];
+    this.accounts = [];
   }
 
   updateTimelines() {
@@ -64,23 +18,65 @@ class MastoStore extends EventEmitter {
     this.emit('update');
   }
 
+  getIndex(key, list) {
+    for(var i = list.length;i--;) {
+      if (list[i].name == key)
+        return i;
+    }
+    return -1;
+  }
+
+  createAccount(account) {
+    this.accounts.push(account);
+  }
+
+  removeAccount(accountName) {
+    const index = this.getIndex(accountName, this.accounts);
+    if (index != -1) {
+      this.accounts.splice(this.getIndex(accountName, this.accounts), 1);
+    }
+  }
+
+  createDomain(domain) {
+    this.domains.push(domain);
+  }
+
+  removeDomain(domainName) {
+    const index = this.getIndex(domainName, this.domains);
+    if (index != -1) {
+      this.domains.splice(this.getIndex(domainName, this.domains), 1);
+    }
+  }
+
+  getDomains () {
+    return this.domains;
+  }
+
+  getAccounts () {
+    return this.accounts;
+  }
+
+  makeCard(html) {
+    //TODO: makeCard;
+  }
+
   makeColumn(k, header, cards) {
     return (<Column key={k} columnHeader={header} listCards={cards} />);
   }
 
-  getHomeTimeline() {
-    const {columnHeader, listCards} = this.columns.home;
-    return this.makeColumn('home', columnHeader, listCards);
+  getHomeTimeline(username) {
+    /*const {columnHeader, listCards} = this.accounts[username].columns['home'];
+    return this.makeColumn('home', columnHeader, listCards);*/
   }
 
-  getNoteTimeline() {
-    const {columnHeader, listCards} = this.columns.notes;
-    return this.makeColumn('notes', columnHeader, listCards);
+  getNoteTimeline(username) {
+    /*const {columnHeader, listCards} = this.accounts[username].columns['note'];
+    return this.makeColumn('notes', columnHeader, listCards);*/
   }
 
-  getFediverseTimeline() {
-    const {columnHeader, listCards} = this.columns.fediverse;
-    return this.makeColumn('fediverse', columnHeader, listCards);
+  getFediverseTimeline(username) {
+    /*const {columnHeader, listCards} = this.accounts[username].columns['fediverse'];
+    return this.makeColumn('fediverse', columnHeader, listCards);*/
   }
 
   handleActions(action) {
@@ -89,6 +85,18 @@ class MastoStore extends EventEmitter {
       case 'UPDATE_TIMELINES':
         this.updateTimelines.bind(this);
         break;
+      case 'CREATE_ACCOUNT':
+        this.createAccount(action.account);
+        break;
+      case 'REMOVE_ACCOUNT':
+        this.removeAccount(action.name);
+        break;
+      case 'CREATE_DOMAIN':
+        this.createDomain(action.domain);
+        break;
+      case 'REMOVE_DOMAIN':
+        this.removeDomain(action.name);
+        break;
       default:
         break;
     }
@@ -96,6 +104,6 @@ class MastoStore extends EventEmitter {
 }
 
 const mastoStore = new MastoStore();
-dispatcher.register(mastoStore.handleActions.bind(mastoStore));
+MastoDispatch.register(mastoStore.handleActions.bind(mastoStore));
 //window.mastoStore = mastoStore;
 export default mastoStore;
