@@ -2,9 +2,10 @@ import React from 'react';
 import {EventEmitter} from 'events';
 
 import MastoDispatch from '../dispatchers/MastoDispatch';
-
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
+
+import * as types from '../constants/actionTypes';
 
 class MastoStore extends EventEmitter {
   constructor() {
@@ -80,21 +81,22 @@ class MastoStore extends EventEmitter {
   }
 
   handleActions(action) {
+    console.log(action);
     //TODO: handle actions
     switch(action.type) {
-      case 'UPDATE_TIMELINES':
+      case types.UPDATE_TIMELINES:
         this.updateTimelines.bind(this);
         break;
-      case 'CREATE_ACCOUNT':
+      case types.CREATE_ACCOUNT:
         this.createAccount(action.account);
         break;
-      case 'REMOVE_ACCOUNT':
+      case types.REMOVE_ACCOUNT:
         this.removeAccount(action.name);
         break;
-      case 'CREATE_DOMAIN':
+      case types.CREATE_DOMAIN:
         this.createDomain(action.domain);
         break;
-      case 'REMOVE_DOMAIN':
+      case types.REMOVE_DOMAIN:
         this.removeDomain(action.name);
         break;
       default:

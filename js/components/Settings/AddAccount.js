@@ -3,7 +3,10 @@ import React from 'react';
 export default class AddAccount extends React.Component {
   render() {
     return (
-      <div>AddAccount</div>
+      <div>
+        <form className="account-form">
+        </form>
+      </div>
     )
   }
 }
