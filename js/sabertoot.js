@@ -14,15 +14,14 @@ const app = document.getElementById('app');
 ReactDOM.render(
   <Router history={hashHistory}>
     <Route path='/' component={Layout}>
-      <IndexRoute component={Timelines}></IndexRoute>
-      <Route path='/timelines' component={Index}></Route>
+      <IndexRoute component={Index}></IndexRoute>
+      <Route path='/timelines' component={Timelines}></Route>
       <Route path='/settings' component={Settings}></Route>
-      <Route path='/newaccount' component={AddDomain}>
+      <Route path='/newaccount' component={NewAccount}>
         <IndexRoute component={AddDomain}></IndexRoute>
         <Route path='/domain' component={AddDomain}></Route>
         <Route path='/user' component={AddAccount}></Route>
       </Route>
-      <Route path='/add_account' component={AddAccount}></Route>
     </Route>
   </Router>,
 app);

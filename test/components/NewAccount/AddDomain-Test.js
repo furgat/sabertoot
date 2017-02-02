@@ -52,15 +52,31 @@ describe('component AddDomain', function() {
 
     describe('element .account-name', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddDomain />).find('.account-name');
+        this.wrapper = mount(<AddDomain />).find('.account-name');
       })
 
       it ('should not be .invalid by default', function() {
         expect(this.wrapper.hasClass('invalid')).to.equal(false);
       })
 
-      it ('should be .invalid if value is not a valid username')
-      it ('should be .valid if value is a valid username')
+      it ('should be .invalid if value is changed but empty', function() {
+        const testCase = '';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('invalid')).to.equal(true);
+
+      })
+
+      it ('should be .invalid if value is not a valid username', function() {
+        const testCase = '<BadUsername/>seriously://unsafe;';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('invalid')).to.equal(true);
+      })
+
+      it ('should be .valid if value is a valid username', function() {
+        const testCase = 'username';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('valid')).to.equal(true);
+      })
     })
 
     describe('element .domain-selector', function() {
@@ -169,36 +185,98 @@ describe('component AddDomain', function() {
         expect(this.wrapper.hasClass('hidden')).to.equal(true);
       })
 
-      describe('element .new-domain-api', function() {
+      describe('element .new-domain-name', function() {
         beforeEach(function() {
-            this.wrapper = shallow(<AddDomain />).find('.new-domain-api')
+            this.wrapper = mount(<AddDomain />).find('.new-domain-name')
         })
 
-        it ('should have no value by default')
-        it ('should not be .invalid by default')
-        it ('should be .invalid if value is not a valid url')
-        it ('should be .valid if value is a valid url')
+        it ('should have no value by default', function() {
+          expect(this.wrapper.node.value).to.equal('');
+        })
+
+        it ('should not be .invalid by default', function() {
+          expect(this.wrapper.hasClass('invalid')).to.equal(false)
+        })
+
+        it ('should be .invalid if value is changed but empty', function() {
+          const testCase = '';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('invalid')).to.equal(true);
+        })
+
+        it ('should be .invalid if value is not a valid domain name', function() {
+          const testCase = '';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('invalid')).to.equal(true);
+        })
+
+        it ('should be .valid if value is a valid domain name', function() {
+          const testCase = 'domainn.ame';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('invalid')).to.equal(true);
+        })
+      })
+
+      describe('element .new-domain-api', function() {
+        beforeEach(function() {
+            this.wrapper = mount(<AddDomain />).find('.new-domain-api')
+        })
+
+        it ('should have no value by default', function() {
+          expect(this.wrapper.node.value).to.equal('');
+        })
+
+        it ('should not be .invalid by default', function() {
+          expect(this.wrapper.hasClass('invalid')).to.equal(false)
+        })
+
+        it ('should be .invalid if value is changed but empty', function() {
+          const testCase = '';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('invalid')).to.equal(true);
+        })
+
+        it ('should be .invalid if value is not a valid url', function() {
+          const testCase = 'fake.notaurl';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('invalid')).to.equal(true);
+        })
+
+        it ('should be .valid if value is a valid url', function() {
+          const testCase = 'https://test.case/';
+          this.wrapper.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('valid')).to.equal(true);
+        })
       })
 
       describe('element .submit-new-domain', function() {
         beforeEach(function() {
-          this.wrapper = shallow(<AddDomain />).find('.new-domain-form');
-          this.addToggle = this.wrapper.parent().find('.add-toggle');
+          this.wrapper = mount(<AddDomain />).find('.submit-new-domain');
+          this.newDomainName = this.wrapper.parent().find('.new-domain-name');
+          this.newDomainApi = this.wrapper.parent().find('.new-domain-api');
         })
 
         it ('should be .disabled by default', function() {
-          expect(this.wrapper.find('.submit-new-domain').hasClass('disabled')).to.equal(true);
+          expect(this.wrapper.hasClass('disabled')).to.equal(true);
         })
 
-        it ('should not be .disabled after .add-toggle is clicked', function() {
-          this.addToggle.simulate('click');
-          expect(this.wrapper.find('.submit-new-domain').hasClass('disabled')).to.equal(true);
+        it ('should be .disabled if .new-domain-api is .invalid', function() {
+          const testCase = 'nota.url';
+          this.newDomainApi.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('disabled')).to.equal(true);
         })
 
-        it ('should be .disabled after .add-toggle is clicked twice', function() {
-          for (var i in [0,1])
-            this.addToggle.simulate('click');
-          expect(this.wrapper.find('.submit-new-domain').hasClass('disabled')).to.equal(true);
+        it ('should be .disabled if .new-domain-api neither .valid nor .invalid', function() {
+          const testCase = '';
+          this.newDomainApi.simulate('change', {target: {value: testCase}});
+          expect(this.wrapper.hasClass('disabled')).to.equal(true);
+        })
+
+        it ('should not be .disabled if .new-domain-api and .new-domain-name are both .valid', function() {
+          const testCase = {domainName: 'domain', domainApi:'https://test.case/'};
+          this.newDomainName.simulate('change', {target: {value: testCase.domainName}})
+          this.newDomainApi.simulate('change', {target: {value: testCase.domainApi}});
+          expect(this.wrapper.hasClass('disabled')).to.equal(false);
         })
       })
     })

@@ -1,4 +1,5 @@
 import React from 'react';
+import {regexRef, regexTest} from '../../constants/helperFunctions';
 
 //TODO: future version, probably create or implement modular form component
 export default class AddAccount extends React.Component {
@@ -6,15 +7,18 @@ export default class AddAccount extends React.Component {
     super();
     this.state = {
       auth_code: '',
-      auth_input_state: ''
+      auth_input: '',
+      submit_auth: 'disabled'
     }
   }
 
   validateAuth(event) {
-    const inputCode = event.target.value;
-    const validInput = /\d{6}/;
+    const {AUTH_CODE} = regexRef();
+    const testAuth = regexTest(AUTH_CODE, event.target.value);
     this.setState({
-      auth_input_state: (validInput.test(inputCode) ? 'valid' : 'invalid')
+      auth_code: (testAuth ? event.target.value : ''),
+      auth_input: (testAuth ? 'valid' : 'invalid'),
+      submit_auth: (testAuth ? '' : 'disabled')
     });
   }
 
@@ -23,8 +27,8 @@ export default class AddAccount extends React.Component {
       <div className="add-account">
         <form className="auth-form">
           <label className="auth-code-label">Authorization Code:</label>
-          <input type="text" className={"auth-code "+this.state.auth_input_state} onChange={this.validateAuth.bind(this)}/>
-          <button type="button" className="submit-auth disabled">VALIDATE</button>
+          <input type="text" className={"auth-code "+this.state.auth_input} onChange={this.validateAuth.bind(this)}/>
+          <button type="button" className={"submit-auth "+this.state.submit_auth}>VALIDATE</button>
         </form>
       </div>
     );

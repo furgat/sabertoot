@@ -36,8 +36,8 @@ describe('component AddAccount', function() {
 
     describe('element .submit-auth', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddAccount />).find('.auth-form');
-        this.accessCode = this.wrapper.find('.access-code');
+        this.wrapper = mount(<AddAccount />).find('.auth-form');
+        this.auth = this.wrapper.find('.auth-code');
         this.wrapper = this.wrapper.find('.submit-auth');
       })
 
@@ -45,21 +45,49 @@ describe('component AddAccount', function() {
         expect(this.wrapper.hasClass('disabled')).to.equal(true);
       })
 
-      it ('should be .disabled if .access-code is .invalid')
-      it ('should not be .disabled if .access-code is .valid')
+      it ('should be .disabled if .access-code is .invalid', function() {
+        const testCase = 'fake45';
+        this.auth.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('disabled')).to.equal(true);
+      })
+
+      it ('should not be .disabled if .access-code is .valid', function() {
+        const testCase = '345624';
+        this.auth.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('disabled')).to.equal(false);
+      })
     })
 
     describe('element .auth-code', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddAccount />).find('.auth-code')
+        this.wrapper = mount(<AddAccount />).find('.auth-code')
       })
 
       it ('should have no value by default', function() {
-        expect(this.wrapper.node.value).to.not.exist;
+        expect(this.wrapper.node.value).to.equal('');
       })
-      it ('should be .invalid if value is empty')
-      it ('should be .invalid if value is not a valid access code')
-      it ('should be .valid if value is a valid access code')
+
+      it ('should not be .invalid by default', function() {
+        expect(this.wrapper.hasClass('invalid')).to.equal(false);
+      })
+
+      it ('should be .invalid if value is changed but empty', function() {
+        const testCase = '';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('invalid')).to.equal(true);
+      })
+
+      it ('should be .invalid if value is not a valid access code', function() {
+        const testCase = 'fake45';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('invalid')).to.equal(true);
+      })
+
+      it ('should be .valid if value is a valid access code', function() {
+        const testCase = '456343';
+        this.wrapper.simulate('change', {target: {value: testCase}});
+        expect(this.wrapper.hasClass('valid')).to.equal(true);
+      })
     })
   })
 })
