@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 
-import AddDomain from '../../../js/components/Settings/AddDomain';
+import AddDomain from '../../../js/components/NewAccount/AddDomain';
 
 describe('component AddDomain', function() {
   beforeEach(function() {
@@ -19,7 +19,7 @@ describe('component AddDomain', function() {
 
   describe('form .account-form', function() {
     beforeEach(function() {
-      this.wrapper = shallow(<AddDomain />).find('.account-form');
+      this.wrapper = shallow(<AddDomain />).find('.domain-form');
     })
 
     it ('should contain an .account-name-label', function() {
@@ -39,11 +39,11 @@ describe('component AddDomain', function() {
     })
 
     it ('should contain an .add-toggle', function() {
-      expect(this.wrapper.find('.add-button').length).to.equal(1);
+      expect(this.wrapper.find('.add-toggle').length).to.equal(1);
     })
 
     it ('should contain a .submit-button', function() {
-      expect(this.wrapper.find('.submit-domain').length).to.equal(1);
+      expect(this.wrapper.find('.submit-button').length).to.equal(1);
     })
 
     it ('should contain a .new-domain-form', function() {
@@ -65,29 +65,29 @@ describe('component AddDomain', function() {
 
     describe('element .domain-selector', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddDomain />).find('.account-form');
-        this.addToggle = this.wrapper.find('.add-toggle');
+        this.wrapper = mount(<AddDomain />).find('.domain-selector');
+        this.addToggle = this.wrapper.parent().find('.add-toggle');
       })
 
       it ('should not be .disabled by default', function() {
-        expect(this.wrapper.find('.domain-selector').hasClass('disabled')).to.equal(false);
+        expect(this.wrapper.hasClass('disabled')).to.equal(false);
       })
 
       it ('should be .disabled after .add-toggle is clicked', function() {
         this.addToggle.simulate('click');
-        expect(this.wrapper.find('.domain-selector').hasClass('disabled')).to.equal(true);
+        expect(this.wrapper.hasClass('disabled')).to.equal(true);
       })
 
       it ('should not be .disabled after .add-toggle is clicked twice', function() {
         for (var i in [0,1])
           this.addToggle.simulate('click');
-        expect(this.wrapper.find('.domain-selector').hasClass('disabled')).to.equal(false);
+        expect(this.wrapper.hasClass('disabled')).to.equal(false);
       })
     })
 
     describe('element .add-toggle', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddDomain />).find('.add-toggle');
+        this.wrapper = mount(<AddDomain />).find('.add-toggle');
       })
 
       it ('should have .plus by default', function() {
@@ -106,31 +106,31 @@ describe('component AddDomain', function() {
       })
     })
 
-    describe('element .submit-domain', function() {
+    describe('element .submit-button', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddDomain />).find('.account-form');
-        this.addToggle = this.wrapper.find('.add-toggle')
+        this.wrapper = mount(<AddDomain />).find('.submit-button');
+        this.addToggle = this.wrapper.parent().find('.add-toggle')
       })
 
       it ('should not be .disabled by default', function() {
-        expect(this.wrapper.find('.submit-domain').hasClass('disabled')).to.equal(false);
+        expect(this.wrapper.hasClass('disabled')).to.equal(false);
       })
 
       it ('should be .disabled after .add-toggle is clicked', function() {
         this.addToggle.simulate('click');
-        expect(this.wrapper.find('.submit-domain').hasClass('disabled')).to.equal(true);
+        expect(this.wrapper.hasClass('disabled')).to.equal(true);
       })
 
       it ('should not be .disabled after .add-toggle is clicked twice', function() {
         for (var i in [0,1])
           this.addToggle.simulate('click');
-        expect(this.wrapper.find('.submit-domain').hasClass('disabled')).to.equal(false);
+        expect(this.wrapper.hasClass('disabled')).to.equal(false);
       })
     })
 
     describe('form .new-domain-form', function() {
       beforeEach(function() {
-        this.wrapper = shallow(<AddDomain />).find('.new-domain-form');
+        this.wrapper = mount(<AddDomain />).find('.new-domain-form');
         this.addToggle = this.wrapper.parent().find('.add-toggle');
       })
 

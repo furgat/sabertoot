@@ -2,7 +2,7 @@ import React from 'react';
 
 export default class Layout extends React.Component {
   navigate() {
-    this.props.history.replaceState(null, "/timelines");
+    this.props.history.replaceState(null, "/");
   }
 
   render() {

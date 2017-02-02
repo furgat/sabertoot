@@ -5,6 +5,9 @@ import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import Layout from './components/Layout';
 import Settings from './components/pages/Settings';
 import Timelines from './components/pages/Timelines';
+import NewAccount from './components/pages/NewAccount';
+import AddDomain from './components/NewAccount/AddDomain';
+import AddAccount from './components/NewAccount/AddAccount';
 
 const app = document.getElementById('app');
 
@@ -12,9 +15,13 @@ ReactDOM.render(
   <Router history={hashHistory}>
     <Route path='/' component={Layout}>
       <IndexRoute component={Timelines}></IndexRoute>
-      <Route path='/timelines' component={Timelines}></Route>
+      <Route path='/timelines' component={Index}></Route>
       <Route path='/settings' component={Settings}></Route>
-      <Route path='/add_domain' component={AddDomain}></Route>
+      <Route path='/newaccount' component={AddDomain}>
+        <IndexRoute component={AddDomain}></IndexRoute>
+        <Route path='/domain' component={AddDomain}></Route>
+        <Route path='/user' component={AddAccount}></Route>
+      </Route>
       <Route path='/add_account' component={AddAccount}></Route>
     </Route>
   </Router>,
