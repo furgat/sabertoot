@@ -23,12 +23,16 @@ export default class AddAccount extends React.Component {
   }
 
   render() {
+    const {auth_input, submit_auth} = this.state;
+    const authCodeClass = 'auth-code ' + auth_input;
+    const submitAuthClass = 'submit-auth ' + submit_auth;
+    
     return (
       <div className="add-account">
         <form className="auth-form">
           <label className="auth-code-label">Authorization Code:</label>
-          <input type="text" className={"auth-code "+this.state.auth_input} onChange={this.validateAuth.bind(this)}/>
-          <button type="button" className={"submit-auth "+this.state.submit_auth}>VALIDATE</button>
+          <input type="text" className={authCodeClass} onChange={this.validateAuth.bind(this)}/>
+          <button type="button" className={submitAuthClass}>VALIDATE</button>
         </form>
       </div>
     );

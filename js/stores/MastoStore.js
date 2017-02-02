@@ -5,7 +5,7 @@ import MastoDispatch from '../dispatchers/MastoDispatch';
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
 
-import * as types from '../constants/actionTypes';
+import actionTypes from '../constants/actionTypes';
 
 class MastoStore extends EventEmitter {
   constructor() {
@@ -81,22 +81,24 @@ class MastoStore extends EventEmitter {
   }
 
   handleActions(action) {
-    console.log(action);
-    //TODO: handle actions
+    const {
+      UPDATE_TIMELINES, CREATE_ACCOUNT, REMOVE_ACCOUNT, CREATE_DOMAIN, REMOVE_DOMAIN
+    } = actionTypes();
+
     switch(action.type) {
-      case types.UPDATE_TIMELINES:
+      case UPDATE_TIMELINES:
         this.updateTimelines.bind(this);
         break;
-      case types.CREATE_ACCOUNT:
+      case CREATE_ACCOUNT:
         this.createAccount(action.account);
         break;
-      case types.REMOVE_ACCOUNT:
+      case REMOVE_ACCOUNT:
         this.removeAccount(action.name);
         break;
-      case types.CREATE_DOMAIN:
+      case CREATE_DOMAIN:
         this.createDomain(action.domain);
         break;
-      case types.REMOVE_DOMAIN:
+      case REMOVE_DOMAIN:
         this.removeDomain(action.name);
         break;
       default:
