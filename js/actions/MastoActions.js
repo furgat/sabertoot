@@ -1,5 +1,5 @@
 import MastoDispatch from '../dispatchers/MastoDispatch';
-import actionTypes from '../constants/actionTypes';
+import {actionTypes} from '../constants/Constants';
 
 export function updateTimelines() {
   MastoDispatch.dispatch({type: actionTypes().UPDATE_TIMELINES});

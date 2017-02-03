@@ -5,18 +5,24 @@ import MastoDispatch from '../dispatchers/MastoDispatch';
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
 
-import actionTypes from '../constants/actionTypes';
+import {actionTypes} from '../constants/Constants';
 
 class MastoStore extends EventEmitter {
   constructor() {
     super();
-    this.domains = [];
+    // {name, api_url, id, c_id, c_secret}
+    this.domains = [
+      {name: 'mastodon.social', api_url: 'https://mastodon.social/api/vi/'}
+    ];
+    // {name, access_code, domain}
     this.accounts = [];
+    // list of Mastodon objects
+    this.connections = [];
   }
 
   updateTimelines() {
     //TODO: update timelines
-    this.emit('update');
+    this.emit('timelines_update');
   }
 
   getIndex(key, list) {
@@ -29,6 +35,7 @@ class MastoStore extends EventEmitter {
 
   createAccount(account) {
     this.accounts.push(account);
+    this.emit('accounts_update');
   }
 
   removeAccount(accountName) {
@@ -36,10 +43,12 @@ class MastoStore extends EventEmitter {
     if (index != -1) {
       this.accounts.splice(this.getIndex(accountName, this.accounts), 1);
     }
+    this.emit('accounts_update');
   }
 
   createDomain(domain) {
     this.domains.push(domain);
+    this.emit('domains_update');
   }
 
   removeDomain(domainName) {
@@ -47,6 +56,7 @@ class MastoStore extends EventEmitter {
     if (index != -1) {
       this.domains.splice(this.getIndex(domainName, this.domains), 1);
     }
+    this.emit('domains_update');
   }
 
   getDomains () {

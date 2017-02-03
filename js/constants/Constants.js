@@ -1,3 +1,13 @@
+export function storageIDs() {
+  const IDs = {
+    DOMAINS: 'fstoot_dom',
+    AUTHS: 'fstoot_aut',
+    SETTINGS: 'fstoot_set'
+  }
+
+  return IDs;
+}
+
 export function actionTypes() {
   const types = {
     UPDATE_TIMELINES: 0,
