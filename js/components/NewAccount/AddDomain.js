@@ -1,4 +1,5 @@
 import React from 'react';
+import {browserHistory} from 'react-router';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
 import {createDomain} from '../../actions/MastoActions';
 import MastoStore from '../../stores/MastoStore';
@@ -11,6 +12,7 @@ export default class AddDomain extends React.Component {
     this.state = {
       domains: MastoStore.getDomains(),
       account_name: '',
+      account_name_value: '',
       add_toggle: 'plus',
       domain_selector: '',
       domain_selector_value: 'mastodon.social',
@@ -45,10 +47,12 @@ export default class AddDomain extends React.Component {
 
   validateAccountLabel(event) {
     const {ACCOUNT_NAME} = regexRef();
-    const testAuth = regexTest(ACCOUNT_NAME, event.target.value);
+    const value = event.target.value;
+    const testAuth = regexTest(ACCOUNT_NAME, value);
 
     this.setState({
       account_name: (testAuth ? 'valid' : 'invalid'),
+      account_name_value: value,
       submit_button: (testAuth ? '' : 'disabled')
     });
   }
@@ -148,20 +152,46 @@ export default class AddDomain extends React.Component {
     this.setState({
       'submit_button': 'disabled' // prevent multi-submit
     }, () => {
-      const {name, api_url} = this.state.domains[this.domainIndex(this.state.domain_selector_value)];
+      const {name, api_url, id} = this.state.domains[this.domainIndex(this.state.domain_selector_value)];
 
-      /*this.request.get(api_url + 'apps')
-        .query({
-          client_name: 'sabertoot',
-          redirect_uris: 'urn:ietf:wg:oauth:2.0:oob',
-          scopes: 'read write follow',
-          website: 'https://github.com/furgat/sabertoot'
-        })
-        .end((error, response) => {
+      if (id == undefined) {
+        this.request.post(api_url + 'apps')
+          .type('form')
+          .send({
+            response_type: 'code',
+            client_name: 'sabertoot',
+            redirect_uris: 'urn:ietf:wg:oauth:2.0:oob',
+            scopes: 'read write follow',
+            website: 'https://github.com/furgat/sabertoot'
+          })
+          .end((error, response) => {
+            if (!response.error) {
+              const {id, client_id, client_secret} = response.body;
 
-        })*/
+              createDomain({name, api_url, id, client_id, client_secret});
 
+              this.redirectToAddAccount(name);
+            }
+          });
+      } else {
+        this.redirectToAddAccount(name);
+      }
+
+      this.setState({
+        'submit_button': ''
+      });
     });
+  }
+
+  redirectToAddAccount(domain_name) {
+    const {account_name_value} = this.state;
+
+    createAccount({
+      name: account_name_value,
+      domain_name
+    });
+
+    this.props.router.push('/newaccount/user');
   }
 
   render() {
@@ -206,7 +236,7 @@ export default class AddDomain extends React.Component {
             <button className={submitNewDomainClass} onClick={this.submitNewDomain.bind(this)}>ADD DOMAIN</button>
           </form>
 
-          <button className={submitButtonClass} onClick={this.registerWithDomain.bind(this)}>REQUEST AUTH</button>
+          <button className={submitButtonClass} onClick={this.registerWithDomain.bind(this)}>REQUEST OAUTH</button>
         </div>
       </div>
     )

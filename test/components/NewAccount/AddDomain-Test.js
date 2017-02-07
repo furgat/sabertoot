@@ -128,8 +128,8 @@ describe('component AddDomain', function() {
         this.addToggle = this.wrapper.parent().find('.add-toggle')
       })
 
-      it ('should not be .disabled by default', function() {
-        expect(this.wrapper.hasClass('disabled')).to.equal(false);
+      it ('should be .disabled by default', function() {
+        expect(this.wrapper.hasClass('disabled')).to.equal(true);
       })
 
       it ('should be .disabled after .add-toggle is clicked', function() {

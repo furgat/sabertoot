@@ -7,24 +7,32 @@ import Column from '../components/Timelines/Column';
 
 import {actionTypes, storageIDs} from '../constants/Constants';
 
+const storageAccess = (typeof(Storage) !== undefined && localStorage !== undefined);
+
 class MastoStore extends EventEmitter {
   constructor() {
     super();
     // {name, api_url, id, c_id, c_secret}
     this.domains = [];
 
-    const pastDomains = JSON.parse(window.localStorage.getItem(storageIDs().DOMAINS));
+    if (storageAccess) {
+      const storedData = window.localStorage.getItem(storageIDs().DOMAINS);
 
-    if (pastDomains != undefined) {
-      this.domains = this.domains.concat(pastDomains);
-      this.emit('domains_update');
-    } else {
-      this.domains.push(
-        { name: 'mastodon.social', api_url: 'https://mastodon.social/api/vi/' }
-      )
+      if (storedData != null) {
+        const pastDomains = JSON.parse(storedData);
+
+        if (pastDomains != undefined) {
+          this.domains = this.domains.concat(pastDomains);
+          console.log(JSON.stringify(this.domains));
+        } else {
+          this.domains.push(
+            { name: 'mastodon.social', api_url: 'https://mastodon.social/api/v1/' }
+          )
+        }
+      }
     }
 
-    // {name, access_code, domain}
+    // {name, access_code, domain_name}
     this.accounts = [];
     // list of Mastodon objects
     this.connections = [];
@@ -67,7 +75,10 @@ class MastoStore extends EventEmitter {
       }
     }
     // store domains
-    window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
+    if (storageAccess) {
+      window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
+    }
+
     this.emit('domains_update');
   }
 

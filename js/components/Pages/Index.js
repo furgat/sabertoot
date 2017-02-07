@@ -4,16 +4,24 @@ import ReactTimeout from 'react-timeout'
 
 import {storageIDs} from '../../constants/Constants';
 
+const storageAccess = (typeof(Storage) !== undefined);
+
 export default class Index extends React.Component {
   constructor() {
     super();
+  }
 
-    const dataCheck = window.localStorage.getItem(storageIDs().AUTHS);
+  componentDidUpdate() {
+    if (storageAccess) {
+      const dataCheck = window.localStorage.getItem(storageIDs().AUTHS);
 
-    if (dataCheck == undefined || dataCheck == null)
-      browserHistory.push('#/newaccount')
-    else
-      browserHistory.push('#/timelines')
+      if (dataCheck == undefined || dataCheck == null)
+        this.props.router.push('/newaccount/domain');
+      else
+        this.props.router.push('/timelines');
+    } else {
+      // error page about needing local storage to use this app
+    }
   }
 
   render() {

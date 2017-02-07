@@ -49,7 +49,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot",
-    "test": "mocha --watch --reporter mocha-unfunk-reporter test/.setup.js 'test/**/*.js'"
+    "test": "mocha -r mock-local-storage --watch --reporter mocha-unfunk-reporter test/.setup.js 'test/**/*.js'"
   },
   "author": "demi mercury",
   "license": "GPL-3.0",

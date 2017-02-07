@@ -20,8 +20,8 @@ ReactDOM.render(
       <Route path='/settings' component={Settings}></Route>
       <Route path='/newaccount' component={NewAccount}>
         <IndexRoute component={AddDomain}></IndexRoute>
-        <Route path='/domain' component={AddDomain}></Route>
-        <Route path='/user' component={AddAccount}></Route>
+        <Route path='/newaccount/domain' component={AddDomain}></Route>
+        <Route path='/newaccount/user' component={AddAccount}></Route>
       </Route>
     </Route>
   </Router>,
