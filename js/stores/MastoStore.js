@@ -5,15 +5,25 @@ import MastoDispatch from '../dispatchers/MastoDispatch';
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
 
-import {actionTypes} from '../constants/Constants';
+import {actionTypes, storageIDs} from '../constants/Constants';
 
 class MastoStore extends EventEmitter {
   constructor() {
     super();
     // {name, api_url, id, c_id, c_secret}
-    this.domains = [
-      {name: 'mastodon.social', api_url: 'https://mastodon.social/api/vi/'}
-    ];
+    this.domains = [];
+
+    const pastDomains = JSON.parse(window.localStorage.getItem(storageIDs().DOMAINS));
+
+    if (pastDomains != undefined) {
+      this.domains = this.domains.concat(pastDomains);
+      this.emit('domains_update');
+    } else {
+      this.domains.push(
+        { name: 'mastodon.social', api_url: 'https://mastodon.social/api/vi/' }
+      )
+    }
+
     // {name, access_code, domain}
     this.accounts = [];
     // list of Mastodon objects
@@ -46,8 +56,18 @@ class MastoStore extends EventEmitter {
     this.emit('accounts_update');
   }
 
-  createDomain(domain) {
-    this.domains.push(domain);
+  createDomain({name, api_url, id, client_id, client_secret}) {
+    const domainIndex = this.getIndex(name, this.domains);
+
+    if (domainIndex == -1) {
+      this.domains.push({name, api_url});
+    } else {
+      this.domains[domainIndex] = {
+        name, api_url, id, client_id, client_secret
+      }
+    }
+    // store domains
+    window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
     this.emit('domains_update');
   }
 
