@@ -1,7 +1,7 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
-import {createDomain} from '../../actions/MastoActions';
+import {createDomain, createAccount} from '../../actions/MastoActions';
 import MastoStore from '../../stores/MastoStore';
 
 //TODO: future version, probably create or implement modular form component
@@ -188,10 +188,11 @@ export default class AddDomain extends React.Component {
 
     createAccount({
       name: account_name_value,
+      access_code: 'TODO',
       domain_name
     });
 
-    this.props.router.push('/newaccount/user');
+    this.props.router.push('/newaccount/user/'+account_name_value);
   }
 
   render() {

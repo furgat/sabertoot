@@ -52,7 +52,12 @@ describe('component AddDomain', function() {
 
     describe('element .account-name', function() {
       beforeEach(function() {
-        this.wrapper = mount(<AddDomain />).find('.account-name');
+        this.mount = mount(<AddDomain />)
+        this.wrapper = this.mount.find('.account-name');
+      })
+
+      afterEach(function() {
+        this.mount.unmount();
       })
 
       it ('should not be .invalid by default', function() {
@@ -81,8 +86,13 @@ describe('component AddDomain', function() {
 
     describe('element .domain-selector', function() {
       beforeEach(function() {
-        this.wrapper = mount(<AddDomain />).find('.domain-selector');
+        this.mount = mount(<AddDomain />)
+        this.wrapper = this.mount.find('.domain-selector');
         this.addToggle = this.wrapper.parent().find('.add-toggle');
+      })
+
+      afterEach(function() {
+        this.mount.unmount();
       })
 
       it ('should not be .disabled by default', function() {
@@ -103,7 +113,12 @@ describe('component AddDomain', function() {
 
     describe('element .add-toggle', function() {
       beforeEach(function() {
-        this.wrapper = mount(<AddDomain />).find('.add-toggle');
+        this.mount = mount(<AddDomain />);
+        this.wrapper = this.mount.find('.add-toggle');
+      })
+
+      afterEach(function() {
+        this.mount.unmount();
       })
 
       it ('should have .plus by default', function() {

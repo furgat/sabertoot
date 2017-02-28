@@ -11,7 +11,7 @@ export default class Index extends React.Component {
     super();
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
     if (storageAccess) {
       const dataCheck = window.localStorage.getItem(storageIDs().AUTHS);
 

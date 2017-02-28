@@ -5,10 +5,25 @@ import {regexRef, regexTest} from '../../constants/helperFunctions';
 export default class AddAccount extends React.Component {
   constructor() {
     super();
+    var OAuth2 = require('oauth').OAuth2;
+
+    var oauth = new OAuth2(
+      'your_client_id',
+      'your_client_secret',
+      'https://mastodon.social',
+      null, '/oauth/token');
+
+    var url = oauth.getAuthorizeUrl({
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+      response_type: 'code',
+      scope: 'read write follow'
+    });
+
     this.state = {
       auth_code: '',
       auth_input: '',
-      submit_auth: 'disabled'
+      submit_auth: 'disabled',
+      oauth_url: url
     }
   }
 
@@ -22,14 +37,31 @@ export default class AddAccount extends React.Component {
     });
   }
 
+  getAccessKey() {
+    oauth.getOAuthAccessToken(
+      'code from the authorization page that user should paste into your app',
+      {
+        grant_type: 'authorization_code',
+        redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
+      },
+      function(err, accessToken, refreshToken, res) {
+        console.log(accessToken);
+      }
+    );
+  }
+
   render() {
-    const {auth_input, submit_auth} = this.state;
+    const {auth_input, submit_auth, oauth_url} = this.state;
+    const {params} = this.props;
     const authCodeClass = 'auth-code ' + auth_input;
     const submitAuthClass = 'submit-auth ' + submit_auth;
-    
+
     return (
       <div className="add-account">
         <form className="auth-form">
+          <span>
+            {oauth_url}
+          </span>
           <label className="auth-code-label">Authorization Code:</label>
           <input type="text" className={authCodeClass} onChange={this.validateAuth.bind(this)}/>
           <button type="button" className={submitAuthClass}>VALIDATE</button>
