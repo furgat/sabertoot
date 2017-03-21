@@ -15,7 +15,8 @@ export function actionTypes() {
     REMOVE_DOMAIN: 2,
     NEW_DOMAIN_OAUTH: 3,
     CREATE_ACCOUNT: 4,
-    REMOVE_ACCOUNT: 5
+    REMOVE_ACCOUNT: 5,
+    EDIT_ACCOUNT: 6
   }
 
   return types;

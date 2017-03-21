@@ -21,7 +21,7 @@ ReactDOM.render(
       <Route path='/newaccount' component={NewAccount}>
         <IndexRoute component={AddDomain}></IndexRoute>
         <Route path='/newaccount/domain' component={AddDomain}></Route>
-        <Route path='/newaccount/user/:uname' component={AddAccount}></Route>
+        <Route path='/newaccount/user' component={AddAccount}></Route>
       </Route>
     </Route>
   </Router>,

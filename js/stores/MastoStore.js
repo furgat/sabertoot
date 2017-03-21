@@ -25,6 +25,8 @@ class MastoStore extends EventEmitter {
           this.domains = this.domains.concat(pastDomains);
           console.log(JSON.stringify(this.domains));
         } else {
+          // if there are no domains, at least list mastodon's flagship
+          // can easily expand this to add more popular domains by default later
           this.domains.push(
             { name: 'mastodon.social', api_url: 'https://mastodon.social/api/v1/' }
           )
@@ -32,7 +34,7 @@ class MastoStore extends EventEmitter {
       }
     }
 
-    // {name, access_code, domain_name}
+    // {name, access_code, domain_name, flag}
     this.accounts = [];
     // list of Mastodon objects
     this.connections = [];
@@ -43,9 +45,11 @@ class MastoStore extends EventEmitter {
     this.emit('timelines_update');
   }
 
-  getIndex(key, list) {
+  // helper function
+  // returns the index of 'name' in 'list', -1 if not found
+  getIndex(name, list) {
     for(var i = list.length;i--;) {
-      if (list[i].name == key)
+      if (list[i].name == name)
         return i;
     }
     return -1;
@@ -53,14 +57,29 @@ class MastoStore extends EventEmitter {
 
   createAccount(account) {
     this.accounts.push(account);
+    console.log(JSON.stringify(this.accounts));
+    this.emit('accounts_update');
+  }
+
+  editAccount(account) {
+    const index = this.getIndex(accountName, this.accounts);
+
+    // if the account doesn't exist, just redirect to create
+    if (index == -1)
+      this.createAccount(account);
+
+    this.accounts[index] = account; // replace in place
+
     this.emit('accounts_update');
   }
 
   removeAccount(accountName) {
     const index = this.getIndex(accountName, this.accounts);
+
     if (index != -1) {
-      this.accounts.splice(this.getIndex(accountName, this.accounts), 1);
+      this.accounts.splice(index, 1);
     }
+
     this.emit('accounts_update');
   }
 
@@ -74,6 +93,7 @@ class MastoStore extends EventEmitter {
         name, api_url, id, client_id, client_secret
       }
     }
+
     // store domains
     if (storageAccess) {
       window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
@@ -84,17 +104,35 @@ class MastoStore extends EventEmitter {
 
   removeDomain(domainName) {
     const index = this.getIndex(domainName, this.domains);
+
     if (index != -1) {
-      this.domains.splice(this.getIndex(domainName, this.domains), 1);
+      this.domains.splice(index, 1);
     }
+
     this.emit('domains_update');
   }
 
-  getDomains () {
+  getDomains() {
     return this.domains;
   }
 
-  getAccounts () {
+  getDomainWithName(name) {
+    const {domains} = this;
+    const index = this.getIndex(name, domains);
+
+    return domains[index];
+  }
+
+  getAccountWithFlag(flag) {
+    const {accounts} = this;
+    for(var i = accounts.length;i--;) {
+      if (accounts[i].flag == flag)
+        return accounts[i];
+    }
+    return null;
+  }
+
+  getAccounts() {
     return this.accounts;
   }
 
@@ -123,7 +161,7 @@ class MastoStore extends EventEmitter {
 
   handleActions(action) {
     const {
-      UPDATE_TIMELINES, CREATE_ACCOUNT, REMOVE_ACCOUNT, CREATE_DOMAIN, REMOVE_DOMAIN
+      UPDATE_TIMELINES, CREATE_ACCOUNT, EDIT_ACCOUNT, REMOVE_ACCOUNT, CREATE_DOMAIN, REMOVE_DOMAIN
     } = actionTypes();
 
     switch(action.type) {
@@ -132,6 +170,9 @@ class MastoStore extends EventEmitter {
         break;
       case CREATE_ACCOUNT:
         this.createAccount(action.account);
+        break;
+      case EDIT_ACCOUNT:
+        this.editAccount(action.account);
         break;
       case REMOVE_ACCOUNT:
         this.removeAccount(action.name);

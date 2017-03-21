@@ -189,10 +189,11 @@ export default class AddDomain extends React.Component {
     createAccount({
       name: account_name_value,
       access_code: 'TODO',
-      domain_name
+      domain_name,
+      flag: 'PROG'
     });
 
-    this.props.router.push('/newaccount/user/'+account_name_value);
+    this.props.router.push('/newaccount/user')//+account_name_value);
   }
 
   render() {
@@ -202,43 +203,60 @@ export default class AddDomain extends React.Component {
     } = this.state;
 
     const accountNameClass = 'form-control account-name ' + account_name;
-    const addToggleClass = 'add-toggle ' + add_toggle;
-    const domainSelectorClass = 'form-control domain-selector ' + domain_selector;
+    const addToggleClass = 'add-toggle btn btn-primary col-xs-2' + add_toggle;
+    const addToggleGlyph = 'glyphicon glyphicon-' + add_toggle;
+
+    const domainSelectorClass = 'form-control domain-selector col-xs-10' + domain_selector;
     const domainOptions = this.state.domains.map(
       (domain, id) => (<option key={id} value={domain.name}>{domain.name}</option>)
     );
     const submitButtonClass = 'btn btn-primary submit-button ' + submit_button;
 
-    const newDomainFormClass = 'form-group new-domain-form ' + new_domain_form;
+    const newDomainFormClass = 'form-group new-domain-form well ' + new_domain_form;
     const newDomainNameClass = 'form-control new-domain-name ' + new_domain_name;
     const newDomainApiClass = 'form-control new-domain-api ' + new_domain_api;
     const submitNewDomainClass = 'btn btn-default submit-new-domain ' + submit_new_domain;
 
     return (
-      <div className="col-xs-6 add-domain">
-        <div className="domain-form form-group">
-          <label className="account-name-label">Account Label</label>
-          <input type="text" className={accountNameClass} onChange={this.validateAccountLabel.bind(this)} />
+      <div className="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3 add-domain">
+        <h1>New Account</h1>
+        <form className="domain-form">
+          <div className="form-group">
+            <label className="account-name-label">Account Label</label>
+            <input type="text" className={accountNameClass} onChange={this.validateAccountLabel.bind(this)} />
+          </div>
 
-          <label className="domain-selector-label">Select Domain</label>
-          <select className={domainSelectorClass} onChange={this.selectDomain.bind(this)} defaultValue="mastodon.social">
-            {domainOptions}
-          </select>
+          <div className="form-group">
+            <label className="domain-selector-label">Select Domain</label>
 
-          <button className={addToggleClass} onClick={this.addToggleClick.bind(this)}></button>
+            <span className="input-group">
+              <select className={domainSelectorClass} onChange={this.selectDomain.bind(this)} defaultValue="mastodon.social">
+                {domainOptions}
+              </select>
+              <span className="input-group-btn">
+                <button className={addToggleClass} onClick={this.addToggleClick.bind(this)}>
+                  <span className={addToggleGlyph} aria-hidden="true"></span>&nbsp;Add
+                </button>
+              </span>
+            </span>
+          </div>
 
-          <form className={newDomainFormClass}>
-            <label className="new-domain-name-label">New Domain Name</label>
-            <input type="text" className={newDomainNameClass} onChange={this.validateDomainName.bind(this)}/>
+          <div className={newDomainFormClass}>
+            <div className="form-group">
+              <label className="new-domain-name-label">New Domain Name</label>
+              <input type="text" className={newDomainNameClass} onChange={this.validateDomainName.bind(this)}/>
+            </div>
 
-            <label className="new-domain-api-label">New Domain Name</label>
-            <input type="text" className={newDomainApiClass} onChange={this.validateDomainApi.bind(this)}/>
+            <div className="form-group">
+              <label className="new-domain-api-label">New Domain Name</label>
+              <input type="text" className={newDomainApiClass} onChange={this.validateDomainApi.bind(this)}/>
+            </div>
 
             <button className={submitNewDomainClass} onClick={this.submitNewDomain.bind(this)}>ADD DOMAIN</button>
-          </form>
+          </div>
 
           <button className={submitButtonClass} onClick={this.registerWithDomain.bind(this)}>REQUEST OAUTH</button>
-        </div>
+        </form>
       </div>
     )
   }

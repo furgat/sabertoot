@@ -1,5 +1,6 @@
 import React from 'react';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
+import MastoStore from '../../stores/MastoStore';
 
 //TODO: future version, probably create or implement modular form component
 export default class AddAccount extends React.Component {
@@ -7,13 +8,17 @@ export default class AddAccount extends React.Component {
     super();
     var OAuth2 = require('oauth').OAuth2;
 
+    const {name, domain_name} = MastoStore.getAccountWithFlag('PROG');
+    const {api_url, client_id, client_secret} = MastoStore.getDomainWithName(domain_name);
+    const domain_url = new URL(api_url);
+
     var oauth = new OAuth2(
-      'your_client_id',
-      'your_client_secret',
-      'https://mastodon.social',
+      client_id,
+      client_secret,
+      domain_url.protocol + '//' + domain_url.hostname,
       null, '/oauth/token');
 
-    var url = oauth.getAuthorizeUrl({
+    var oauth_url = oauth.getAuthorizeUrl({
       redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
       response_type: 'code',
       scope: 'read write follow'
@@ -23,8 +28,12 @@ export default class AddAccount extends React.Component {
       auth_code: '',
       auth_input: '',
       submit_auth: 'disabled',
-      oauth_url: url
+      account_hold: {
+        name, domain_name
+      }
     }
+
+    window.open(oauth_url, '_blank');
   }
 
   validateAuth(event) {
@@ -38,8 +47,10 @@ export default class AddAccount extends React.Component {
   }
 
   getAccessKey() {
+    const {auth_code} = this.state;
+
     oauth.getOAuthAccessToken(
-      'code from the authorization page that user should paste into your app',
+      auth_code,
       {
         grant_type: 'authorization_code',
         redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
@@ -51,20 +62,19 @@ export default class AddAccount extends React.Component {
   }
 
   render() {
-    const {auth_input, submit_auth, oauth_url} = this.state;
-    const {params} = this.props;
-    const authCodeClass = 'auth-code ' + auth_input;
-    const submitAuthClass = 'submit-auth ' + submit_auth;
+    const {auth_input, submit_auth} = this.state;
+    const authCodeClass = 'auth-code form-control' + auth_input;
+    const submitAuthClass = 'submit-auth btn btn-primary' + submit_auth;
 
     return (
-      <div className="add-account">
+      <div className="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3 add-account">
+        <h1>New Account</h1>
         <form className="auth-form">
-          <span>
-            {oauth_url}
-          </span>
-          <label className="auth-code-label">Authorization Code:</label>
-          <input type="text" className={authCodeClass} onChange={this.validateAuth.bind(this)}/>
-          <button type="button" className={submitAuthClass}>VALIDATE</button>
+          <div className="form-group">
+            <label className="auth-code-label">Authorization Code:</label>
+            <input type="text" className={authCodeClass} onChange={this.validateAuth.bind(this)}/>
+          </div>
+          <button type="button" className={submitAuthClass} onClick={this.getAccessKey.bind(this)}>VALIDATE</button>
         </form>
       </div>
     );
