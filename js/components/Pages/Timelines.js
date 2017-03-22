@@ -10,6 +10,7 @@ export default class Timelines extends React.Component {
   constructor() {
     super();
     this.updateFromStore = this.updateFromStore.bind(this);
+    console.log(JSON.stringify(MastoStore.getAccounts()));
     this.state = {
       listColumns: [
         MastoStore.getHomeTimeline(),

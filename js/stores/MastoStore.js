@@ -14,30 +14,44 @@ class MastoStore extends EventEmitter {
     super();
     // {name, api_url, id, c_id, c_secret}
     this.domains = [];
-
-    if (storageAccess) {
-      const storedData = window.localStorage.getItem(storageIDs().DOMAINS);
-
-      if (storedData != null) {
-        const pastDomains = JSON.parse(storedData);
-
-        if (pastDomains != undefined) {
-          this.domains = this.domains.concat(pastDomains);
-          console.log(JSON.stringify(this.domains));
-        } else {
-          // if there are no domains, at least list mastodon's flagship
-          // can easily expand this to add more popular domains by default later
-          this.domains.push(
-            { name: 'mastodon.social', api_url: 'https://mastodon.social/api/v1/' }
-          )
-        }
-      }
-    }
-
     // {name, access_code, domain_name, flag}
     this.accounts = [];
     // list of Mastodon objects
     this.connections = [];
+
+    const loadedDomains = this.loadFromStorage(storageIDs().DOMAINS);
+    const loadedAuths = this.loadFromStorage(storageIDs().AUTHS);
+
+    console.log(loadedDomains + ' & ' + loadedAuths);
+
+    if (loadedDomains != 'EMPTY') {
+      this.domains = this.domains.concat(loadedDomains);
+    } else {
+      // default array, can easily be added to later
+      this.domains = [
+        {name: 'mastodon.social', api_url: 'https://mastodon.social/api/v1/'}
+      ];
+      this.saveOnly();
+    }
+
+    if (loadedAuths != 'EMPTY')
+      this.accounts = this.accounts.concat(loadedAuths);
+
+    console.log("D: " + JSON.stringify(this.domains));
+    console.log("A: " + JSON.stringify(this.accounts));
+  }
+
+  loadFromStorage(id) {
+    if (storageAccess) {
+      const storedData = window.localStorage.getItem(id);
+
+      if (storedData == undefined || storedData == '[]') {
+        return 'EMPTY';
+      } else {
+        const jsonData = JSON.parse(storedData);
+        return jsonData;
+      }
+    }
   }
 
   updateTimelines() {
@@ -55,14 +69,29 @@ class MastoStore extends EventEmitter {
     return -1;
   }
 
+  saveOnly() {
+    if (storageAccess) {
+      window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
+      window.localStorage.setItem(storageIDs().AUTHS, JSON.stringify(this.accounts));
+
+      console.log("D: " + JSON.stringify(this.domains));
+      console.log("A: " + JSON.stringify(this.accounts));
+    }
+  }
+
+  saveAndEmit(to_emit) {
+    this.saveOnly();
+    this.emit(to_emit);
+  }
+
   createAccount(account) {
     this.accounts.push(account);
     console.log(JSON.stringify(this.accounts));
-    this.emit('accounts_update');
+    this.saveAndEmit('accounts_update');
   }
 
   editAccount(account) {
-    const index = this.getIndex(accountName, this.accounts);
+    const index = this.getIndex(account.name, this.accounts);
 
     // if the account doesn't exist, just redirect to create
     if (index == -1)
@@ -70,7 +99,7 @@ class MastoStore extends EventEmitter {
 
     this.accounts[index] = account; // replace in place
 
-    this.emit('accounts_update');
+    this.saveAndEmit('accounts_update');
   }
 
   removeAccount(accountName) {
@@ -80,7 +109,7 @@ class MastoStore extends EventEmitter {
       this.accounts.splice(index, 1);
     }
 
-    this.emit('accounts_update');
+    this.saveAndEmit('accounts_update');
   }
 
   createDomain({name, api_url, id, client_id, client_secret}) {
@@ -95,11 +124,7 @@ class MastoStore extends EventEmitter {
     }
 
     // store domains
-    if (storageAccess) {
-      window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
-    }
-
-    this.emit('domains_update');
+    this.saveAndEmit('domains_update');
   }
 
   removeDomain(domainName) {
@@ -109,7 +134,7 @@ class MastoStore extends EventEmitter {
       this.domains.splice(index, 1);
     }
 
-    this.emit('domains_update');
+    this.saveAndEmit('domains_update');
   }
 
   getDomains() {

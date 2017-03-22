@@ -1,5 +1,6 @@
 import React from 'react';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
+import {editAccount} from '../../actions/MastoActions';
 import MastoStore from '../../stores/MastoStore';
 
 //TODO: future version, probably create or implement modular form component
@@ -12,26 +13,26 @@ export default class AddAccount extends React.Component {
     const {api_url, client_id, client_secret} = MastoStore.getDomainWithName(domain_name);
     const domain_url = new URL(api_url);
 
-    var oauth = new OAuth2(
-      client_id,
-      client_secret,
-      domain_url.protocol + '//' + domain_url.hostname,
-      null, '/oauth/token');
-
-    var oauth_url = oauth.getAuthorizeUrl({
-      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-      response_type: 'code',
-      scope: 'read write follow'
-    });
-
     this.state = {
       auth_code: '',
       auth_input: '',
       submit_auth: 'disabled',
       account_hold: {
         name, domain_name
-      }
+      },
+      oauth: new OAuth2(
+        client_id,
+        client_secret,
+        domain_url.protocol + '//' + domain_url.hostname,
+        null, '/oauth/token'),
+
     }
+
+    var oauth_url = this.state.oauth.getAuthorizeUrl({
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+      response_type: 'code',
+      scope: 'read write follow'
+    });
 
     window.open(oauth_url, '_blank');
   }
@@ -47,7 +48,7 @@ export default class AddAccount extends React.Component {
   }
 
   getAccessKey() {
-    const {auth_code} = this.state;
+    const {auth_code, oauth} = this.state;
 
     oauth.getOAuthAccessToken(
       auth_code,
@@ -55,16 +56,19 @@ export default class AddAccount extends React.Component {
         grant_type: 'authorization_code',
         redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
       },
-      function(err, accessToken, refreshToken, res) {
+      (err, accessToken, refreshToken, res) => {
+        const {name, domain_name} = this.state.account_hold;
         console.log(accessToken);
+        editAccount({name, access_code: accessToken, domain_name});
+        this.props.router.push('/timelines');
       }
     );
   }
 
   render() {
     const {auth_input, submit_auth} = this.state;
-    const authCodeClass = 'auth-code form-control' + auth_input;
-    const submitAuthClass = 'submit-auth btn btn-primary' + submit_auth;
+    const authCodeClass = 'auth-code form-control ' + auth_input;
+    const submitAuthClass = 'submit-auth btn btn-primary ' + submit_auth;
 
     return (
       <div className="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3 add-account">

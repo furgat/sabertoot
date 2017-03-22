@@ -152,9 +152,9 @@ export default class AddDomain extends React.Component {
     this.setState({
       'submit_button': 'disabled' // prevent multi-submit
     }, () => {
-      const {name, api_url, id} = this.state.domains[this.domainIndex(this.state.domain_selector_value)];
+      const {name, api_url, client_id} = this.state.domains[this.domainIndex(this.state.domain_selector_value)];
 
-      if (id == undefined) {
+      if (client_id == undefined) {
         this.request.post(api_url + 'apps')
           .type('form')
           .send({
@@ -171,15 +171,15 @@ export default class AddDomain extends React.Component {
               createDomain({name, api_url, id, client_id, client_secret});
 
               this.redirectToAddAccount(name);
+            } else {
+              this.setState({
+                'submit_button': ''
+              });
             }
           });
       } else {
         this.redirectToAddAccount(name);
       }
-
-      this.setState({
-        'submit_button': ''
-      });
     });
   }
 
@@ -188,7 +188,6 @@ export default class AddDomain extends React.Component {
 
     createAccount({
       name: account_name_value,
-      access_code: 'TODO',
       domain_name,
       flag: 'PROG'
     });

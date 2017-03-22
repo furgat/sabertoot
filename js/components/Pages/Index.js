@@ -11,12 +11,12 @@ export default class Index extends React.Component {
     super();
   }
 
-  componentDidMount() {
+  componentWillMount() {
     if (storageAccess) {
       const dataCheck = window.localStorage.getItem(storageIDs().AUTHS);
 
-      if (dataCheck == undefined || dataCheck == null)
-        this.props.router.push('/newaccount/domain');
+      if (dataCheck == undefined || dataCheck == null || dataCheck.length <= 0)
+        this.props.router.push('/newaccount');
       else
         this.props.router.push('/timelines');
     } else {

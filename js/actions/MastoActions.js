@@ -25,4 +25,8 @@ export function removeAccount(accountName) {
   MastoDispatch.dispatch({type: actionTypes().REMOVE_ACCOUNT, accountName});
 }
 
+export function editAccount(account) {
+  MastoDispatch.dispatch({type: actionTypes().EDIT_ACCOUNT, account});
+}
+
 // ...
