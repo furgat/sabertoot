@@ -59,7 +59,7 @@ export default class AddAccount extends React.Component {
       (err, accessToken, refreshToken, res) => {
         const {name, domain_name} = this.state.account_hold;
         console.log(accessToken);
-        editAccount({name, access_code: accessToken, domain_name});
+        editAccount({name, access_token: accessToken, domain_name});
         this.props.router.push('/timelines');
       }
     );

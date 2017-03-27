@@ -1,11 +1,13 @@
 import React from 'react';
 import {EventEmitter} from 'events';
 
-import MastoDispatch from '../dispatchers/MastoDispatch';
 import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
+import MastoHandler from '../components/MastoStore/MastoHandler';
 
 import {actionTypes, storageIDs} from '../constants/Constants';
+
+import MastoDispatch from '../dispatchers/MastoDispatch';
 
 const storageAccess = (typeof(Storage) !== undefined && localStorage !== undefined);
 
@@ -14,9 +16,10 @@ class MastoStore extends EventEmitter {
     super();
     // {name, api_url, id, c_id, c_secret}
     this.domains = [];
-    // {name, access_code, domain_name, flag}
+    // {name, access_token, domain_name, flag}
     this.accounts = [];
-    // list of Mastodon objects
+
+    // list of MastoHandlers
     this.connections = [];
 
     const loadedDomains = this.loadFromStorage(storageIDs().DOMAINS);
@@ -167,6 +170,27 @@ class MastoStore extends EventEmitter {
 
   makeColumn(k, header, cards) {
     return (<Column key={k} columnHeader={header} listCards={cards} />);
+  }
+
+  createNewConnection(account) {
+    const {name, access_token} = account;
+    const {connections} = this;
+
+    return undefined;
+  }
+
+  getConnectionByAccount(account) {
+    const {name} = account;
+    const {connections} = this;
+
+    if (connections.length > 0) {
+      for(var i = connections.length; i--;) {
+        if (connections[i].name == name)
+          return connections[i].instance;
+      }
+    }
+
+    return this.createNewConnection(account);
   }
 
   getHomeTimeline(username) {
