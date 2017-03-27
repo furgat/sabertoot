@@ -1,4 +1,3 @@
-// small object to handle individual
 export class MastoHandler {
   constructor(server, token) {
     this.token = token;
@@ -6,7 +5,7 @@ export class MastoHandler {
   }
 
   _post_request(endpoint, data) {
-    let postPromise = new Promise((resolve, reject) => {
+    var postPromise = new Promise((resolve, reject) => {
       const {token, server} = this;
       const headers = new Headers();
       headers.set('Authorization', 'Bearer ' + token);
@@ -32,7 +31,7 @@ export class MastoHandler {
   }
 
   _get_request(endpoint) {
-    let getPromise = new Promise((resolve, reject) => {
+    var getPromise = new Promise((resolve, reject) => {
       const {token, server} = this;
       const headers = new Headers();
       headers.set('Authorization', 'Bearer ' + token);
@@ -52,5 +51,22 @@ export class MastoHandler {
         console.log(error);
       }
     );
+  }
+
+  _timeline_options(options) {
+    if(typeof(options) == 'object') {
+      const params = []
+			if(options.max_id) params.push('max_id='+options.max_id)
+			if(options.since_id) params.push('since_id='+options.since_id)
+			if(options.limit) params.push('limit='+options.limit)
+			if(params.length) return '?'+params.join('&')
+    }
+    return '';
+  }
+
+  getTimeline(timeline, options) {
+    if (timeline == '') return Promise.reject('no timeline selected');
+
+
   }
 }
