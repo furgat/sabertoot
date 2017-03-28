@@ -37,8 +37,10 @@ class MastoStore extends EventEmitter {
       this.saveOnly();
     }
 
-    if (loadedAuths != 'EMPTY')
+    if (loadedAuths != 'EMPTY') {
       this.accounts = this.accounts.concat(loadedAuths);
+      this.accounts[0].flag = 'SEL';
+    }
 
     console.log("D: " + JSON.stringify(this.domains));
     console.log("A: " + JSON.stringify(this.accounts));
@@ -173,10 +175,16 @@ class MastoStore extends EventEmitter {
   }
 
   createNewConnection(account) {
-    const {name, access_token} = account;
+    const {name, access_code, domain_name} = account;
+    const {api_url} = this.getDomainWithName(domain_name);
     const {connections} = this;
+    console.log(api_url + ', ' + access_code);
+    connections.push({
+      name,
+      instance: new MastoHandler(api_url, access_code)
+    });
 
-    return undefined;
+    return connections[connections.length - 1].instance;
   }
 
   getConnectionByAccount(account) {
@@ -193,9 +201,14 @@ class MastoStore extends EventEmitter {
     return this.createNewConnection(account);
   }
 
-  getHomeTimeline(username) {
+  getHomeTimeline(account = this.getAccountWithFlag('SEL')) {
     /*const {columnHeader, listCards} = this.accounts[username].columns['home'];
     return this.makeColumn('home', columnHeader, listCards);*/
+    const conn = this.getConnectionByAccount(account);
+
+    conn.getTimeline('home').then((res) => {
+      console.log(JSON.stringify(res))
+    });
   }
 
   getNoteTimeline(username) {

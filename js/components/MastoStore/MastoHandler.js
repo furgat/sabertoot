@@ -1,60 +1,29 @@
-export class MastoHandler {
+export default class MastoHandler {
   constructor(server, token) {
     this.token = token;
     this.server = server;
+    this.request = require('superagent');
+
+    console.log('S: ' + this.server + ', T: ' + this.token);
   }
 
   _post_request(endpoint, data) {
-    var postPromise = new Promise((resolve, reject) => {
-      const {token, server} = this;
-      const headers = new Headers();
-      headers.set('Authorization', 'Bearer ' + token);
-      const body = new URLSearchParams();
-      for(var key in data) body.set(key, data[key]);
-      const init = {
-        method : 'POST',
-        mode : 'cors',
-        headers,
-        body
-      };
-      return fetch(server+endpoint, init).then(response=>response);
-    });
-
-    return postPromise.then(
-      res => {
-        console.log(res);
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    const {token, server} = this;
+    return this.request.post(server+endpoint)
+                       .send(data)
+                       .set('Authorization', 'Bearer ' + token)
+                       .then(res=>res, err=>err);
   }
 
   _get_request(endpoint) {
-    var getPromise = new Promise((resolve, reject) => {
-      const {token, server} = this;
-      const headers = new Headers();
-      headers.set('Authorization', 'Bearer ' + token);
-      const init = {
-        method : 'GET',
-        mode : 'cors',
-        headers
-      };
-      return fetch(server+endpoint, init).then(response=>response);
-    });
-
-    return postPromise.then(
-      res => {
-        console.log(res);
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    const {token, server} = this;
+    return this.request.get(server+endpoint)
+                       .set('Authorization', 'Bearer ' + token)
+                       .then(res=>res, err=>err);
   }
 
-  _timeline_options(options) {
-    if(typeof(options) == 'object') {
+  _timeline_options(options = undefined) {
+    if(options != undefined) {
       const params = []
 			if(options.max_id) params.push('max_id='+options.max_id)
 			if(options.since_id) params.push('since_id='+options.since_id)
@@ -64,9 +33,16 @@ export class MastoHandler {
     return '';
   }
 
-  getTimeline(timeline, options) {
-    if (timeline == '') return Promise.reject('no timeline selected');
+  getTimeline(target = '', options) {
+    if (target == '') return Promise.reject('no timeline selected');
 
+    var url_target = 'timelines/';
+    if (target.substring(0,1) == '#') {
+      url_target += '/tag/' + target.substring(1);
+    } else if (target != ''){
+      url_target += target;
+    }
 
+    return this._get_request(url_target+this._timeline_options(options));
   }
 }

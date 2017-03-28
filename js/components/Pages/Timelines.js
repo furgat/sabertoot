@@ -6,6 +6,8 @@ import Navigation from '../Timelines/Navigation';
 import MastoStore from '../../stores/MastoStore';
 import * as MastoActions from '../../actions/MastoActions';
 
+/* this is literally almost all temporary code */
+
 export default class Timelines extends React.Component {
   constructor() {
     super();
