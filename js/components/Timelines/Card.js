@@ -32,8 +32,7 @@ export default class Card extends React.Component {
                 {timeStamp}
               </div>
             </div>
-            <div className="card-msg">
-              {cardMsg}
+            <div className="card-msg" dangerouslySetInnerHTML={{__html:cardMsg}}>
             </div>
             <div className="card-actions">
               <a className="reply-button"><span className="glyphicon glyphicon-share" /></a>

@@ -21,3 +21,13 @@ export function actionTypes() {
 
   return types;
 }
+
+export function defCol() {
+  const cols = {
+    HOME: 'home',
+    NOTE: 'notifications',
+    FEDI: 'public'
+  }
+
+  return cols;
+}

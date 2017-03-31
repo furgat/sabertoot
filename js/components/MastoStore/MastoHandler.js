@@ -22,17 +22,18 @@ export default class MastoHandler {
                        .then(res=>res, err=>err);
   }
 
-  _timeline_options(options = undefined) {
-    if(options != undefined) {
-      const params = []
-			if(options.max_id) params.push('max_id='+options.max_id)
-			if(options.since_id) params.push('since_id='+options.since_id)
-			if(options.limit) params.push('limit='+options.limit)
-			if(params.length) return '?'+params.join('&')
+  _encode_options(options = undefined) {
+    if (options != undefined) {
+      const params = [];
+      for (var i = 0; i < options.length; i++) {
+        params.push(options[i].key+options[i].val);
+      }
+      return (params.length ? params.join('&') : '');
     }
     return '';
   }
 
+  // url option keys - max_id=, since_id=, limit=
   getTimeline(target = '', options) {
     if (target == '') return Promise.reject('no timeline selected');
 
@@ -43,6 +44,6 @@ export default class MastoHandler {
       url_target += target;
     }
 
-    return this._get_request(url_target+this._timeline_options(options));
+    return this._get_request(url_target+this._encode_options(options));
   }
 }

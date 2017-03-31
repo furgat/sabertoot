@@ -5,11 +5,12 @@ import Card from '../components/Timelines/Card';
 import Column from '../components/Timelines/Column';
 import MastoHandler from '../components/MastoStore/MastoHandler';
 
-import {actionTypes, storageIDs} from '../constants/Constants';
+import {actionTypes, storageIDs, defCol} from '../constants/Constants';
 
 import MastoDispatch from '../dispatchers/MastoDispatch';
 
 const storageAccess = (typeof(Storage) !== undefined && localStorage !== undefined);
+const _LOG = false;
 
 class MastoStore extends EventEmitter {
   constructor() {
@@ -24,8 +25,6 @@ class MastoStore extends EventEmitter {
 
     const loadedDomains = this.loadFromStorage(storageIDs().DOMAINS);
     const loadedAuths = this.loadFromStorage(storageIDs().AUTHS);
-
-    console.log(loadedDomains + ' & ' + loadedAuths);
 
     if (loadedDomains != 'EMPTY') {
       this.domains = this.domains.concat(loadedDomains);
@@ -42,9 +41,24 @@ class MastoStore extends EventEmitter {
       this.accounts[0].flag = 'SEL';
     }
 
-    console.log("D: " + JSON.stringify(this.domains));
-    console.log("A: " + JSON.stringify(this.accounts));
+    if (_LOG) {
+      console.log("D: " + JSON.stringify(this.domains));
+      console.log("A: " + JSON.stringify(this.accounts));
+    }
   }
+
+  // helper functions
+
+  // returns the index of 'name' in 'list', -1 if not found
+  getIndex(name, list) {
+    for(var i = list.length;i--;) {
+      if (list[i].name == name)
+        return i;
+    }
+    return -1;
+  }
+
+  // data storage functions
 
   loadFromStorage(id) {
     if (storageAccess) {
@@ -59,28 +73,10 @@ class MastoStore extends EventEmitter {
     }
   }
 
-  updateTimelines() {
-    //TODO: update timelines
-    this.emit('timelines_update');
-  }
-
-  // helper function
-  // returns the index of 'name' in 'list', -1 if not found
-  getIndex(name, list) {
-    for(var i = list.length;i--;) {
-      if (list[i].name == name)
-        return i;
-    }
-    return -1;
-  }
-
   saveOnly() {
     if (storageAccess) {
       window.localStorage.setItem(storageIDs().DOMAINS, JSON.stringify(this.domains));
       window.localStorage.setItem(storageIDs().AUTHS, JSON.stringify(this.accounts));
-
-      console.log("D: " + JSON.stringify(this.domains));
-      console.log("A: " + JSON.stringify(this.accounts));
     }
   }
 
@@ -89,9 +85,10 @@ class MastoStore extends EventEmitter {
     this.emit(to_emit);
   }
 
+  // account functions
+
   createAccount(account) {
     this.accounts.push(account);
-    console.log(JSON.stringify(this.accounts));
     this.saveAndEmit('accounts_update');
   }
 
@@ -117,6 +114,21 @@ class MastoStore extends EventEmitter {
     this.saveAndEmit('accounts_update');
   }
 
+  getAccountWithFlag(flag) {
+    const {accounts} = this;
+    for(var i = accounts.length;i--;) {
+      if (accounts[i].flag == flag)
+        return accounts[i];
+    }
+    return undefined;
+  }
+
+  getAccounts() {
+    return this.accounts;
+  }
+
+  // domain functions
+
   createDomain({name, api_url, id, client_id, client_secret}) {
     const domainIndex = this.getIndex(name, this.domains);
 
@@ -128,7 +140,6 @@ class MastoStore extends EventEmitter {
       }
     }
 
-    // store domains
     this.saveAndEmit('domains_update');
   }
 
@@ -153,38 +164,19 @@ class MastoStore extends EventEmitter {
     return domains[index];
   }
 
-  getAccountWithFlag(flag) {
-    const {accounts} = this;
-    for(var i = accounts.length;i--;) {
-      if (accounts[i].flag == flag)
-        return accounts[i];
-    }
-    return null;
-  }
-
-  getAccounts() {
-    return this.accounts;
-  }
-
-  makeCard(html) {
-    //TODO: makeCard;
-  }
-
-  makeColumn(k, header, cards) {
-    return (<Column key={k} columnHeader={header} listCards={cards} />);
-  }
+  // connection functions
 
   createNewConnection(account) {
     const {name, access_code, domain_name} = account;
     const {api_url} = this.getDomainWithName(domain_name);
     const {connections} = this;
-    console.log(api_url + ', ' + access_code);
+
     connections.push({
       name,
       instance: new MastoHandler(api_url, access_code)
     });
 
-    return connections[connections.length - 1].instance;
+    return connections.length - 1;
   }
 
   getConnectionByAccount(account) {
@@ -194,33 +186,38 @@ class MastoStore extends EventEmitter {
     if (connections.length > 0) {
       for(var i = connections.length; i--;) {
         if (connections[i].name == name)
-          return connections[i].instance;
+          return i;
       }
     }
 
     return this.createNewConnection(account);
   }
 
-  getHomeTimeline(account = this.getAccountWithFlag('SEL')) {
-    /*const {columnHeader, listCards} = this.accounts[username].columns['home'];
-    return this.makeColumn('home', columnHeader, listCards);*/
-    const conn = this.getConnectionByAccount(account);
+  // timeline functions
 
-    conn.getTimeline('home').then((res) => {
-      console.log(JSON.stringify(res))
-    });
+  updateTimeline(timeline = defCol().HOME, account = this.getAccountWithFlag('SEL'), options) {
+    if (account != undefined) {
+      const conn = this.getConnectionByAccount(account);
+      const instance = this.connections[conn].instance;
+
+      instance.getTimeline(timeline, options).then((res) => {
+        if (!this.connections[conn].json) this.connections[conn].json = new Object();
+        this.connections[conn].json[timeline] = res.text;
+
+        this.emit('timelines_update');
+      });
+    }
   }
 
-  getNoteTimeline(username) {
-    /*const {columnHeader, listCards} = this.accounts[username].columns['note'];
-    return this.makeColumn('notes', columnHeader, listCards);*/
+  getTimelineJSON(timeline = defCol().HOME, account = this.getAccountWithFlag('SEL')) {
+    if (account != undefined) {
+      const conn = this.getConnectionByAccount(account);
+
+      return (this.connections[conn].json[timeline] ? this.connections[conn].json[timeline] : {});
+    }
   }
 
-  getFediverseTimeline(username) {
-    /*const {columnHeader, listCards} = this.accounts[username].columns['fediverse'];
-    return this.makeColumn('fediverse', columnHeader, listCards);*/
-  }
-
+  // actions
   handleActions(action) {
     const {
       UPDATE_TIMELINES, CREATE_ACCOUNT, EDIT_ACCOUNT, REMOVE_ACCOUNT, CREATE_DOMAIN, REMOVE_DOMAIN
@@ -228,7 +225,7 @@ class MastoStore extends EventEmitter {
 
     switch(action.type) {
       case UPDATE_TIMELINES:
-        this.updateTimelines.bind(this);
+        this.updateTimeline(action.timeline, action.account, action.options);
         break;
       case CREATE_ACCOUNT:
         this.createAccount(action.account);

@@ -1,8 +1,8 @@
 import MastoDispatch from '../dispatchers/MastoDispatch';
 import {actionTypes} from '../constants/Constants';
 
-export function updateTimelines() {
-  MastoDispatch.dispatch({type: actionTypes().UPDATE_TIMELINES});
+export function updateTimeline(timeline, account, options) {
+  MastoDispatch.dispatch({type: actionTypes().UPDATE_TIMELINES, timeline, account, options});
 }
 
 export function createDomain(domain) {
