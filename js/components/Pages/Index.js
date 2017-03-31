@@ -15,8 +15,8 @@ export default class Index extends React.Component {
     if (storageAccess) {
       const dataCheck = window.localStorage.getItem(storageIDs().AUTHS);
 
-      if (dataCheck == undefined || dataCheck == null || dataCheck.length <= 0)
-        this.props.router.push('/newaccount');
+      if (dataCheck == undefined || dataCheck == null || dataCheck == '[]')
+        this.props.router.push('/newaccount/');
       else
         this.props.router.push('/timelines');
     } else {

@@ -31,16 +31,16 @@ export default class Timelines extends React.Component {
     return (<Column key={'col'+header} header={header} data={data} />);
   }
 
-  refresh() {
-    updateTimeline();
+  clickRefresh(timeline) {
+    updateTimeline(timeline);
   }
 
   updateFromStore() {
-    this.setState({
-      renderColumns:[
-        this.makeColumn(defCol().HOME, MastoStore.getTimelineJSON(defCol().HOME))
-      ]
-    });
+    var renderColumns = [];
+    renderColumns.push(this.makeColumn(defCol().HOME, MastoStore.getTimelineJSON(defCol().HOME)));
+    renderColumns.push(this.makeColumn(defCol().NOTE, MastoStore.getTimelineJSON(defCol().NOTE)));
+    renderColumns.push(this.makeColumn(defCol().FEDI, MastoStore.getTimelineJSON(defCol().FEDI)));
+    this.setState({renderColumns});
   }
 
   render() {
@@ -50,8 +50,17 @@ export default class Timelines extends React.Component {
       <div className="timelines">
         <Navigation />
         <div className="timelines-body">
-          <button className="btn btn-primary" onClick={this.refresh}>Refresh</button>
-          {renderColumns}
+          <div className="col-xs-2">
+            <div className="form-group">
+              
+            </div>
+            <button className="btn btn-primary" onClick={this.clickRefresh.bind(this, defCol().HOME)}>Refresh Home</button>
+            <button className="btn btn-primary" onClick={this.clickRefresh.bind(this, defCol().NOTE)}>Refresh Notes</button>
+            <button className="btn btn-primary" onClick={this.clickRefresh.bind(this, defCol().FEDI)}>Refresh Fediv</button>
+          </div>
+          <div className="col-xs-10">
+            {renderColumns}
+          </div>
         </div>
       </div>
     );

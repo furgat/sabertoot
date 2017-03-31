@@ -24,9 +24,9 @@ export function actionTypes() {
 
 export function defCol() {
   const cols = {
-    HOME: 'home',
+    HOME: 'timelines/home',
     NOTE: 'notifications',
-    FEDI: 'public'
+    FEDI: 'timelines/public'
   }
 
   return cols;

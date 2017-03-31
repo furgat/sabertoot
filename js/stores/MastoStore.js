@@ -167,13 +167,13 @@ class MastoStore extends EventEmitter {
   // connection functions
 
   createNewConnection(account) {
-    const {name, access_code, domain_name} = account;
+    const {name, access_token, domain_name} = account;
     const {api_url} = this.getDomainWithName(domain_name);
     const {connections} = this;
 
     connections.push({
       name,
-      instance: new MastoHandler(api_url, access_code)
+      instance: new MastoHandler(api_url, access_token)
     });
 
     return connections.length - 1;
@@ -203,7 +203,7 @@ class MastoStore extends EventEmitter {
       instance.getTimeline(timeline, options).then((res) => {
         if (!this.connections[conn].json) this.connections[conn].json = new Object();
         this.connections[conn].json[timeline] = res.text;
-
+        if (_LOG) console.log(timeline + ': ' + res.text);
         this.emit('timelines_update');
       });
     }
@@ -213,7 +213,7 @@ class MastoStore extends EventEmitter {
     if (account != undefined) {
       const conn = this.getConnectionByAccount(account);
 
-      return (this.connections[conn].json[timeline] ? this.connections[conn].json[timeline] : {});
+      return (this.connections[conn].json[timeline] ? this.connections[conn].json[timeline] : undefined);
     }
   }
 
