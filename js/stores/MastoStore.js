@@ -173,7 +173,7 @@ class MastoStore extends EventEmitter {
 
     connections.push({
       name,
-      instance: new MastoHandler(api_url, access_token)
+      instance: MastoHandler(api_url, access_token)
     });
 
     return connections.length - 1;
