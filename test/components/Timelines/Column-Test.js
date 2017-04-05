@@ -23,9 +23,10 @@ describe('component Column', function() {
     })
 
     it ('should render Cards when passed', function() {
-      const testCase = [<Card key='123' />, <Card key='324' />, <Card key='424' />];
-      const wrapper = shallow(<Column listCards={testCase} />);
+      const testCase = '[{"id":1234},{"id":3245},{"id":5634}]';
+      const wrapper = mount(<Column listCards={testCase} />);
       expect(wrapper.find('.column-body').children().length).to.equal(3);
+      wrapper.unmount();
     })
   })
 

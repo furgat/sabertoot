@@ -28,7 +28,7 @@ export default class Timelines extends React.Component {
   }
 
   makeColumn(header, data) {
-    return (<Column key={'col'+header} header={header} data={data} />);
+    return (<Column key={'col'+header} columnHeader={header} listCards={data} />);
   }
 
   clickRefresh(timeline) {
@@ -52,7 +52,7 @@ export default class Timelines extends React.Component {
         <div className="timelines-body">
           <div className="col-xs-2">
             <div className="form-group">
-              
+
             </div>
             <button className="btn btn-primary" onClick={this.clickRefresh.bind(this, defCol().HOME)}>Refresh Home</button>
             <button className="btn btn-primary" onClick={this.clickRefresh.bind(this, defCol().NOTE)}>Refresh Notes</button>

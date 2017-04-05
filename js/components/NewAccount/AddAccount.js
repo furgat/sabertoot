@@ -8,10 +8,12 @@ export default class AddAccount extends React.Component {
   constructor() {
     super();
     var OAuth2 = require('oauth').OAuth2;
+    const account = MastoStore.getAccountWithFlag('PROG');
+    const domain = MastoStore.getDomainWithName(domain_name);
 
-    const {name, domain_name} = MastoStore.getAccountWithFlag('PROG');
-    const {api_url, client_id, client_secret} = MastoStore.getDomainWithName(domain_name);
-    const domain_url = new URL(api_url);
+    const {name, domain_name} = (account ? account : {name:'', domain_name:''});
+    const {api_url, client_id, client_secret} = (domain ? domain : {api_url:'http://github.com', client_id:'', client_secret:''});
+    const domain_url = api_url.split('/');
 
     this.state = {
       auth_code: '',
@@ -23,7 +25,7 @@ export default class AddAccount extends React.Component {
       oauth: new OAuth2(
         client_id,
         client_secret,
-        domain_url.protocol + '//' + domain_url.hostname,
+        domain_url[0] + '//' + domain_url[2],
         null, '/oauth/token'),
 
     }
@@ -71,7 +73,7 @@ export default class AddAccount extends React.Component {
     const submitAuthClass = 'submit-auth btn btn-primary ' + submit_auth;
 
     return (
-      <div className="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3 add-account">
+      <div className="add-account col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
         <h1>New Account</h1>
         <form className="auth-form">
           <div className="form-group">

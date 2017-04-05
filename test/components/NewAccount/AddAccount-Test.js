@@ -6,7 +6,11 @@ import AddAccount from '../../../js/components/NewAccount/AddAccount';
 
 describe('component AddAccount', function() {
   beforeEach(function() {
-    this.wrapper = shallow(<AddAccount />);
+    this.wrapper = mount(<AddAccount />);
+  })
+
+  afterEach(function() {
+    this.wrapper.unmount();
   })
 
   it ('should render as .add-account', function() {

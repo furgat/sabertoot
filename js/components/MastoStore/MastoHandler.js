@@ -1,6 +1,6 @@
 export default function MastoHandler(server, token) {
-  const _LOG = false;
-  if (_LOG) console.log('S: ' + this.server + ', T: ' + this.token);
+  const _LOG = true;
+  if (_LOG) console.log('S: ' + server + ', T: ' + token);
 
   return {
     token,

@@ -143,8 +143,9 @@ describe('component Card', function() {
   describe('div .card-msg', function() {
     it ('should render text when passed', function() {
       const testCase = 'some message';
-      const wrapper = shallow(<Card cardMsg={testCase}/>);
+      const wrapper = mount(<Card cardMsg={testCase}/>);
       expect(wrapper.find('.card-msg').text()).to.equal(testCase);
+      wrapper.unmount();
     })
   })
 

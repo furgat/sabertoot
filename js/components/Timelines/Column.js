@@ -4,16 +4,18 @@ import Card from './Card';
 
 export default class Column extends React.Component {
   render() {
-    const {header, data} = this.props;
+    const {columnHeader, listCards} = this.props;
     var cards = [];
 
-    if (data) {
-      cards = JSON.parse(data).map((entry) => {
+    if (listCards) {
+      cards = JSON.parse(listCards).map((entry) => {
+        const {id, account, content} = entry;
+
         return (
           <Card
-            key={'card'+entry.id}
-            displayName={entry.account.display_name}
-            cardMsg={entry.content}
+            key={id ? 'card_' + id : 'card_NaN'}
+            displayName={account ? account.display_name : ''}
+            cardMsg={content ? content : ''}
           />
         );
       });
@@ -22,7 +24,7 @@ export default class Column extends React.Component {
     return (
       <div className="column col-xs-4">
         <div className="column-header">
-          {header}
+          {columnHeader}
         </div>
         <div className="column-body">
           {cards}
