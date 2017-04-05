@@ -26,15 +26,18 @@ export default class AddDomain extends React.Component {
       submit_new_domain: 'disabled',
       submit_button: 'disabled'
     }
+    this.listener = null;
     this.request = require('superagent');
   }
 
   componentWillMount() {
-    MastoStore.on('domains_update', this.updateFromStore.bind(this));
+    this.listener = this.updateFromStore.bind(this);
+    MastoStore.on('domains_update', this.listener);
   }
 
   componentWillUnmount() {
-    MastoStore.removeListener('domains_update', this.updateFromStore.bind(this));
+    if (this.listener !== null)
+      MastoStore.removeListener('domains_update', this.listener);
   }
 
   updateFromStore() {
@@ -201,11 +204,11 @@ export default class AddDomain extends React.Component {
       new_domain_form, new_domain_name, new_domain_api, submit_new_domain
     } = this.state;
 
-    const accountNameClass = 'form-control account-name ' + account_name;
-    const addToggleClass = 'add-toggle btn btn-primary col-xs-2' + add_toggle;
+    const accountNameClass = 'account-name form-control ' + account_name;
+    const addToggleClass = add_toggle + ' add-toggle btn btn-primary col-xs-2';
     const addToggleGlyph = 'glyphicon glyphicon-' + add_toggle;
 
-    const domainSelectorClass = 'form-control domain-selector col-xs-10' + domain_selector;
+    const domainSelectorClass = 'form-control domain-selector col-xs-10 ' + domain_selector;
     const domainOptions = this.state.domains.map(
       (domain, id) => (<option key={id} value={domain.name}>{domain.name}</option>)
     );

@@ -60,7 +60,7 @@ export default class AddAccount extends React.Component {
       },
       (err, accessToken, refreshToken, res) => {
         const {name, domain_name} = this.state.account_hold;
-        console.log(accessToken);
+
         editAccount({name, access_token: accessToken, domain_name});
         this.props.router.push('/timelines');
       }
@@ -69,8 +69,8 @@ export default class AddAccount extends React.Component {
 
   render() {
     const {auth_input, submit_auth} = this.state;
-    const authCodeClass = 'auth-code form-control ' + auth_input;
-    const submitAuthClass = 'submit-auth btn btn-primary ' + submit_auth;
+    const authCodeClass = auth_input + ' auth-code form-control';
+    const submitAuthClass = submit_auth + ' submit-auth btn btn-primary';
 
     return (
       <div className="add-account col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">

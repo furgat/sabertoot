@@ -10,7 +10,7 @@ import {actionTypes, storageIDs, defCol} from '../constants/Constants';
 import MastoDispatch from '../dispatchers/MastoDispatch';
 
 const storageAccess = (typeof(Storage) !== undefined && localStorage !== undefined);
-const _LOG = true;
+const _LOG = false;
 
 class MastoStore extends EventEmitter {
   constructor() {
