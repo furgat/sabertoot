@@ -1,3 +1,4 @@
+'use strict';
 import React from 'react';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
 import {editAccount} from '../../actions/MastoActions';

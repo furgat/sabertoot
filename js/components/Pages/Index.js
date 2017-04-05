@@ -1,3 +1,4 @@
+'use strict';
 import React from 'react';
 import {browserHistory} from 'react-router';
 import ReactTimeout from 'react-timeout'

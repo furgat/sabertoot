@@ -1,3 +1,4 @@
+'use strict';
 export function storageIDs() {
   const IDs = {
     DOMAINS: 'fstoot_dom',

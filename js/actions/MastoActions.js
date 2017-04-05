@@ -1,3 +1,4 @@
+'use strict';
 import MastoDispatch from '../dispatchers/MastoDispatch';
 import {actionTypes} from '../constants/Constants';
 
