@@ -4,7 +4,7 @@ import {browserHistory} from 'react-router';
 import {regexRef, regexTest} from '../../constants/helperFunctions';
 import {createDomain, createAccount} from '../../actions/MastoActions';
 import MastoStore from '../../stores/MastoStore';
-
+import {VText} from '../Form/VText';
 //TODO: future version, probably create or implement modular form component
 // definitely could be far cleaner
 export default class AddDomain extends React.Component {
